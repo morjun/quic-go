@@ -55,9 +55,9 @@ func ParseShortHeader(data []byte, connIDLen int) (length int, _ protocol.Packet
 
 // AppendShortHeader writes a short header.
 func AppendShortHeader(b []byte, connID protocol.ConnectionID, pn protocol.PacketNumber, pnLen protocol.PacketNumberLen, kp protocol.KeyPhaseBit) ([]byte, error) {
-	typeByte := 0x40 | uint8(pnLen-1)
+	typeByte := 0x40 | uint8(pnLen-1) // 010000??
 	if kp == protocol.KeyPhaseOne {
-		typeByte |= byte(1 << 2)
+		typeByte |= byte(1 << 2) // 01000100
 	}
 	b = append(b, typeByte)
 	b = append(b, connID.Bytes()...)
