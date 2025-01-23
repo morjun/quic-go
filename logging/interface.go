@@ -3,9 +3,6 @@
 package logging
 
 import (
-	"net"
-	"time"
-
 	"github.com/quic-go/quic-go/internal/protocol"
 	"github.com/quic-go/quic-go/internal/qerr"
 	"github.com/quic-go/quic-go/internal/utils"
@@ -39,8 +36,8 @@ type (
 	StreamNum = protocol.StreamNum
 	// The StreamType is the type of the stream (unidirectional or bidirectional).
 	StreamType = protocol.StreamType
-	// The VersionNumber is the QUIC version.
-	VersionNumber = protocol.VersionNumber
+	// The Version is the QUIC version.
+	Version = protocol.Version
 
 	// The Header is the QUIC packet header, before removing header protection.
 	Header = wire.Header
@@ -75,27 +72,27 @@ const (
 
 const (
 	// KeyPhaseZero is key phase bit 0
-	KeyPhaseZero KeyPhaseBit = protocol.KeyPhaseZero
+	KeyPhaseZero = protocol.KeyPhaseZero
 	// KeyPhaseOne is key phase bit 1
-	KeyPhaseOne KeyPhaseBit = protocol.KeyPhaseOne
+	KeyPhaseOne = protocol.KeyPhaseOne
 )
 
 const (
 	// PerspectiveServer is used for a QUIC server
-	PerspectiveServer Perspective = protocol.PerspectiveServer
+	PerspectiveServer = protocol.PerspectiveServer
 	// PerspectiveClient is used for a QUIC client
-	PerspectiveClient Perspective = protocol.PerspectiveClient
+	PerspectiveClient = protocol.PerspectiveClient
 )
 
 const (
 	// EncryptionInitial is the Initial encryption level
-	EncryptionInitial EncryptionLevel = protocol.EncryptionInitial
+	EncryptionInitial = protocol.EncryptionInitial
 	// EncryptionHandshake is the Handshake encryption level
-	EncryptionHandshake EncryptionLevel = protocol.EncryptionHandshake
+	EncryptionHandshake = protocol.EncryptionHandshake
 	// Encryption1RTT is the 1-RTT encryption level
-	Encryption1RTT EncryptionLevel = protocol.Encryption1RTT
+	Encryption1RTT = protocol.Encryption1RTT
 	// Encryption0RTT is the 0-RTT encryption level
-	Encryption0RTT EncryptionLevel = protocol.Encryption0RTT
+	Encryption0RTT = protocol.Encryption0RTT
 )
 
 const (
@@ -111,45 +108,4 @@ type ShortHeader struct {
 	PacketNumber     PacketNumber
 	PacketNumberLen  protocol.PacketNumberLen
 	KeyPhase         KeyPhaseBit
-}
-
-// A Tracer traces events.
-type Tracer interface {
-	SentPacket(net.Addr, *Header, ByteCount, []Frame)
-	SentVersionNegotiationPacket(_ net.Addr, dest, src ArbitraryLenConnectionID, _ []VersionNumber)
-	DroppedPacket(net.Addr, PacketType, ByteCount, PacketDropReason)
-}
-
-// A ConnectionTracer records events.
-type ConnectionTracer interface {
-	StartedConnection(local, remote net.Addr, srcConnID, destConnID ConnectionID)
-	NegotiatedVersion(chosen VersionNumber, clientVersions, serverVersions []VersionNumber)
-	ClosedConnection(error)
-	SentTransportParameters(*TransportParameters)
-	ReceivedTransportParameters(*TransportParameters)
-	RestoredTransportParameters(parameters *TransportParameters) // for 0-RTT
-	SentLongHeaderPacket(*ExtendedHeader, ByteCount, ECN, *AckFrame, []Frame)
-	SentShortHeaderPacket(*ShortHeader, ByteCount, ECN, *AckFrame, []Frame)
-	ReceivedVersionNegotiationPacket(dest, src ArbitraryLenConnectionID, _ []VersionNumber)
-	ReceivedRetry(*Header)
-	ReceivedLongHeaderPacket(*ExtendedHeader, ByteCount, ECN, []Frame)
-	ReceivedShortHeaderPacket(*ShortHeader, ByteCount, ECN, []Frame)
-	BufferedPacket(PacketType, ByteCount)
-	DroppedPacket(PacketType, ByteCount, PacketDropReason)
-	UpdatedMetrics(rttStats *RTTStats, cwnd, bytesInFlight ByteCount, packetsInFlight int)
-	AcknowledgedPacket(EncryptionLevel, PacketNumber)
-	LostPacket(EncryptionLevel, PacketNumber, PacketLossReason)
-	UpdatedCongestionState(CongestionState)
-	UpdatedPTOCount(value uint32)
-	UpdatedKeyFromTLS(EncryptionLevel, Perspective)
-	UpdatedKey(generation KeyPhase, remote bool)
-	DroppedEncryptionLevel(EncryptionLevel)
-	DroppedKey(generation KeyPhase)
-	SetLossTimer(TimerType, EncryptionLevel, time.Time)
-	LossTimerExpired(TimerType, EncryptionLevel)
-	LossTimerCanceled()
-	ECNStateUpdated(state ECNState, trigger ECNStateTrigger)
-	// Close is called when the connection is closed.
-	Close()
-	Debug(name, msg string)
 }
