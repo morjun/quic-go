@@ -19,8 +19,8 @@ import (
 
 func main() {
 	quiet := flag.Bool("q", false, "don't print the data")
-	keyLogFile := flag.String("keylog", "", "key log file")
-	insecure := flag.Bool("insecure", false, "skip certificate verification")
+	keyLogFile := flag.String("keylog", "sslkey.log", "key log file")
+	insecure := flag.Bool("insecure", true, "skip certificate verification")
 	flag.Parse()
 	urls := flag.Args()
 
