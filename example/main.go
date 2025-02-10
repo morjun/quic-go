@@ -19,7 +19,7 @@ import (
 
 	"github.com/quic-go/quic-go"
 	"github.com/quic-go/quic-go/http3"
-	"github.com/quic-go/quic-go/internal/testdata"
+	"github.com/quic-go/quic-go/internal/testdata" // logging 패키지 import
 	"github.com/quic-go/quic-go/qlog"
 )
 
@@ -136,6 +136,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 	log.SetOutput(bufio.NewWriter(f))
 	// defer profile.Start().Stop()
 	go func() {
