@@ -24,6 +24,8 @@ func main() {
 	flag.Parse()
 	urls := flag.Args()
 
+	log.SetOutput(os.Stdout)
+
 	var keyLog io.Writer
 	if len(*keyLogFile) > 0 {
 		f, err := os.Create(*keyLogFile)
