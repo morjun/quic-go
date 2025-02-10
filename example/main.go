@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"crypto/md5"
+	"encoding/base64"
 	"errors"
 	"flag"
 	"fmt"
@@ -83,9 +85,27 @@ func setupHandler(www string) http.Handler {
 
 	mux.HandleFunc("/demo/tiles", func(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "<html><head><style>img</style></head><body>")
-		for i := 0; i < 50000000; i++ {
-			// io.WriteString(w, "a")
-			fmt.Fprintf(w, "a")
+		for i := 0; i < 1; i++ {
+			// open big.gif and write to html
+			// big.gif 파일 읽기
+			file, err := os.Open("big.gif")
+			if err != nil {
+				http.Error(w, "Failed to open image", http.StatusInternalServerError)
+				return
+			}
+			defer file.Close()
+
+			// 파일을 메모리에 로드
+			buf := new(bytes.Buffer)
+			if _, err := io.Copy(buf, file); err != nil {
+				http.Error(w, "Failed to read image", http.StatusInternalServerError)
+				return
+			}
+
+			// Base64 인코딩
+			encodedImage := base64.StdEncoding.EncodeToString(buf.Bytes())
+			w.Header().Set("Content-Type", "text/html")
+			fmt.Fprintf(w, `<img src="data:image/gif;base64,%s">`, encodedImage)
 		}
 		io.WriteString(w, "</body></html>")
 		fmt.Println("Data sent")
