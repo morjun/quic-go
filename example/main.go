@@ -84,7 +84,8 @@ func setupHandler(www string) http.Handler {
 	mux.HandleFunc("/demo/tiles", func(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "<html><head><style>img</style></head><body>")
 		for i := 0; i < 50000000; i++ {
-			io.WriteString(w, "a")
+			// io.WriteString(w, "a")
+			fmt.Fprintf(w, "a")
 		}
 		io.WriteString(w, "</body></html>")
 		fmt.Println("Data sent")
