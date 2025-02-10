@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -23,8 +24,6 @@ func main() {
 	insecure := flag.Bool("insecure", true, "skip certificate verification")
 	flag.Parse()
 	urls := flag.Args()
-
-	log.SetOutput(os.Stdout)
 
 	var keyLog io.Writer
 	if len(*keyLogFile) > 0 {
@@ -67,6 +66,7 @@ func main() {
 				log.Fatal(err)
 			}
 			log.Printf("Got response for %s: %#v", addr, rsp)
+			fmt.Println("Got response")
 
 			body := &bytes.Buffer{}
 			_, err = io.Copy(body, rsp.Body)
