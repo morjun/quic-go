@@ -27,7 +27,7 @@ func main() {
 
 	var keyLog io.Writer
 	if len(*keyLogFile) > 0 {
-		f, err := os.Create(*keyLogFile)
+		f, err := os.OpenFile(*keyLogFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
